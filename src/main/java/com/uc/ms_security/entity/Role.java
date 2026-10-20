@@ -39,4 +39,10 @@ public class Role {
             fetch = FetchType.LAZY
     )
     private List<UserRole> userRoles = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "role",
+            fetch = FetchType.LAZY
+    )
+    private List<RolePermission> rolePermissions = new ArrayList<>();
 }

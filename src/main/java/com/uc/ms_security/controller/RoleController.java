@@ -1,5 +1,6 @@
 package com.uc.ms_security.controller;
 
+import com.uc.ms_security.dto.RolePermissionsResponseDTO;
 import com.uc.ms_security.dto.role.RoleRequestDTO;
 import com.uc.ms_security.dto.role.RoleResponseDTO;
 import com.uc.ms_security.service.RoleService;
@@ -33,6 +34,13 @@ public class RoleController {
     public RoleResponseDTO findById(
             @PathVariable Long id) {
         return roleService.findById(id);
+    }
+
+    @GetMapping("/{id}/detail-with-permissions")
+    public RolePermissionsResponseDTO findByIdAndPermissions(
+            @PathVariable Long id) {
+
+        return roleService.findByIdAndPermissions(id);
     }
 
     @PutMapping("/{id}")
