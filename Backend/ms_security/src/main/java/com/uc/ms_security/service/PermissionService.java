@@ -1,13 +1,13 @@
 package com.uc.ms_security.service;
 
-import com.uc.ms_security.dto.permission.CreatePermissionDTO;
-import com.uc.ms_security.dto.permission.PermissionResponseDTO;
-import com.uc.ms_security.dto.permission.UpdatePermissionDTO;
+import com.uc.ms_security.dto.PermissionRequestDTO;
+import com.uc.ms_security.dto.PermissionResponseDTO;
 import com.uc.ms_security.entity.Permission;
-import com.uc.ms_security.mapper.PermissionMapper;
-import com.uc.ms_security.repository.PermissionRepository;
 import com.uc.ms_security.exception.ApplicationException;
 import com.uc.ms_security.exception.ErrorCase;
+import com.uc.ms_security.mapper.PermissionMapper;
+import com.uc.ms_security.repository.PermissionRepository;
+import com.uc.ms_security.repository.RolePermissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,59 +18,78 @@ import java.util.List;
 public class PermissionService {
 
     private final PermissionRepository permissionRepository;
+    private final RolePermissionRepository rolePermissionRepository;
     private final PermissionMapper permissionMapper;
 
-    public PermissionResponseDTO create(CreatePermissionDTO dto) {
-        String method = dto.getMethod().toUpperCase();
-        if (permissionRepository.existsByUrlAndMethod(dto.getUrl(), method)) {
+    public PermissionResponseDTO create(PermissionRequestDTO dto) {
+        if (permissionRepository.existsByUrlAndMethod(
+                dto.getUrl(), dto.getMethod())) {
             throw new ApplicationException(
                     ErrorCase.ALREADY_EXISTS,
-                    "Ya existe un permiso para la URL '" + dto.getUrl() + "' y el método '" + method + "'"
+                    "Ya existe un permiso con esa url y método"
             );
         }
 
         Permission permission = permissionMapper.toEntity(dto);
-        Permission savedPermission = permissionRepository.save(permission);
-        return permissionMapper.toResponseDTO(savedPermission);
+
+        return permissionMapper.toResponseDTO(
+                permissionRepository.save(permission)
+        );
     }
 
     public List<PermissionResponseDTO> findAll() {
-        List<Permission> permissions = permissionRepository.findAll();
-        return permissionMapper.toResponseDTOList(permissions);
-    }
-
-    private Permission findPermission(Long id) {
-        return permissionRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCase.NOT_FOUND,
-                        "Permiso no encontrado con id: " + id
-                ));
+        return permissionMapper.toResponseDTOList(
+                permissionRepository.findAll()
+        );
     }
 
     public PermissionResponseDTO findById(Long id) {
-        Permission permission = findPermission(id);
-        return permissionMapper.toResponseDTO(permission);
+        return permissionMapper.toResponseDTO(
+                findEntityById(id)
+        );
     }
 
+    public PermissionResponseDTO update(
+            Long id,
+            PermissionRequestDTO dto) {
 
-    public PermissionResponseDTO update(Long id, UpdatePermissionDTO dto) {
-        Permission permission = findPermission(id);
-        String method = dto.getMethod().toUpperCase();
+        Permission permission = findEntityById(id);
 
-        if (permissionRepository.existsByUrlAndMethodAndIdNot(dto.getUrl(), method, id)) {
+        if (permissionRepository.existsByUrlAndMethodAndIdNot(
+                dto.getUrl(), dto.getMethod(), id)) {
             throw new ApplicationException(
                     ErrorCase.ALREADY_EXISTS,
-                    "La combinación de URL y método HTTP ya pertenece a otro permiso"
+                    "Ya existe un permiso con esa url y método"
             );
         }
 
         permissionMapper.updateEntity(dto, permission);
-        Permission updatedPermission = permissionRepository.save(permission);
-        return permissionMapper.toResponseDTO(updatedPermission);
+
+        return permissionMapper.toResponseDTO(
+                permissionRepository.save(permission)
+        );
     }
 
     public void delete(Long id) {
-        Permission permission = findPermission(id);
+        Permission permission = findEntityById(id);
+
+        if (rolePermissionRepository.existsByPermissionId(id)) {
+            throw new ApplicationException(
+                    ErrorCase.INVALID_OPERATION,
+                    "No se puede eliminar un permiso que está asignado"
+            );
+        }
+
         permissionRepository.delete(permission);
+    }
+
+    private Permission findEntityById(Long id) {
+        return permissionRepository.findById(id)
+                .orElseThrow(
+                        () -> new ApplicationException(
+                                ErrorCase.NOT_FOUND,
+                                "Permiso no encontrado"
+                        )
+                );
     }
 }
