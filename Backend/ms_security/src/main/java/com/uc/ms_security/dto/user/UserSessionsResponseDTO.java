@@ -14,5 +14,7 @@ public class UserSessionsResponseDTO {
 
     String email;
 
+    Boolean active;
+
     List<SessionResponseDTO> sessions;
 }

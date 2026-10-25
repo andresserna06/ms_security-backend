@@ -12,5 +12,7 @@ public class UserDetailResponseDTO { // Detallado "Detail" - Se refiere a que va
 
     String email;
 
+    Boolean active;
+
     ProfileResponseDTO profile;
 }

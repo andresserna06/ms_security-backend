@@ -26,6 +26,7 @@ public class UserMapper {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
+        user.setActive(true);
 
         return user;
     }
@@ -34,8 +35,12 @@ public class UserMapper {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
 
-        if (dto.getPassword() != null) {
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
             user.setPassword(dto.getPassword());
+        }
+
+        if (dto.getActive() != null) {
+            user.setActive(dto.getActive());
         }
     }
 
@@ -43,7 +48,8 @@ public class UserMapper {
         return new UserResponseDTO(
                 user.getId(),
                 user.getName(),
-                user.getEmail()
+                user.getEmail(),
+                user.getActive()
         );
     }
 
@@ -52,6 +58,7 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+                user.getActive(),
                 profileMapper.toResponseDTO(user.getProfile())
         );
     }
@@ -62,6 +69,7 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+                user.getActive(),
                 sessionMapper.toResponseDTOList(user.getSessions()) // Aca se genera un join de usuario con Sessions
         );
     }
@@ -80,12 +88,10 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+                user.getActive(),
                 userRoleMapper.toResponseDTOList(
                         user.getUserRoles()
                 )
         );
     }
 }
-
-
-
