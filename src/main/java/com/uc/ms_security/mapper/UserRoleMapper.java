@@ -47,7 +47,8 @@ public class UserRoleMapper {
                 new UserResponseDTO(
                         user.getId(),
                         user.getName(),
-                        user.getEmail()
+                        user.getEmail(),
+                        user.getActive()
                 )
         );
     }

@@ -25,8 +25,11 @@ public class User {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String password;
+
+    @Column(nullable = false)
+    private Boolean active = true;
 
     @OneToOne(
             mappedBy = "user",

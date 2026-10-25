@@ -14,5 +14,7 @@ public class UserRolesResponseDTO {
 
     String email;
 
+    Boolean active;
+
     List<UserRoleResponseDTO> roles;
 }

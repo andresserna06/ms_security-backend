@@ -36,10 +36,12 @@ public class UserService {
         User savedUser = userRepository.save(user);
         return userMapper.toResponseDTO(savedUser);
     }
+
     public List<UserResponseDTO> findAll() {
-        List<User> users =userRepository.findAll();
+        List<User> users = userRepository.findAll();
         return userMapper.toResponseDTOList(users);
     }
+
     private User findUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(
@@ -88,6 +90,21 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         return userMapper.toResponseDTO(updatedUser);
     }
+
+    public UserResponseDTO deactivate(Long id) {
+        User user = findUser(id);
+        user.setActive(false);
+        User updatedUser = userRepository.save(user);
+        return userMapper.toResponseDTO(updatedUser);
+    }
+
+    public UserResponseDTO activate(Long id) {
+        User user = findUser(id);
+        user.setActive(true);
+        User updatedUser = userRepository.save(user);
+        return userMapper.toResponseDTO(updatedUser);
+    }
+
     public void delete(Long id) {
         User user = findUser(id);
         userRepository.delete(user);
@@ -106,7 +123,3 @@ public class UserService {
         return userMapper.toRolesResponseDTO(user);
     }
 }
-
-
-
-

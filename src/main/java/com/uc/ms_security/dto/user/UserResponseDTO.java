@@ -7,4 +7,5 @@ public class UserResponseDTO {
     Long id;
     String name;
     String email;
+    Boolean active;
 }

@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Environment Variables & Local Notes ###
+.env
+pendientes/
+
 ### STS ###
 .apt_generated
 .classpath

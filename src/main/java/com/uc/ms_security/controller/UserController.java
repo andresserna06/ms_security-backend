@@ -60,13 +60,19 @@ public class UserController {
         return userService.update(id, dto);
     }
 
+    @PatchMapping("/{id}/deactivate")
+    public UserResponseDTO deactivate(@PathVariable Long id) {
+        return userService.deactivate(id);
+    }
+
+    @PatchMapping("/{id}/activate")
+    public UserResponseDTO activate(@PathVariable Long id) {
+        return userService.activate(id);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         userService.delete(id);
     }
 }
-
-
-
-
