@@ -93,6 +93,7 @@ const App = () => {
         }
       >
         <Routes>
+          <Route exact path="/login" name="Login Page" element={<Login />} />
           <Route exact path="/authentication/login" name="Login Page" element={<Login />} />
           <Route
             exact

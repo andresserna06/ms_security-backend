@@ -18,8 +18,8 @@ import {
 import CIcon from '@coreui/icons-react'
 import { apple } from 'src/assets/brand/apple'
 import { google } from 'src/assets/brand/google'
-import { logo } from 'src/assets/brand/logo'
 import { eye } from 'src/assets/icons/eye'
+import jpaSports from '../../../assets/images/JPASports.jpg'
 
 const Login = () => {
   return (
@@ -29,7 +29,7 @@ const Login = () => {
           <CCol md={8} lg={6} xl={5}>
             <div className="d-flex flex-column gap-4">
               <div className="text-center">
-                <CIcon icon={logo} height={48} />
+                <img src={jpaSports} alt="JPA Sports" height="96" />
               </div>
               <CCard className="p-4">
                 <CCardBody className="d-flex flex-column gap-4">
@@ -47,7 +47,9 @@ const Login = () => {
                     <CCol xs={12}>
                       <div className="d-flex justify-content-between">
                         <CFormLabel htmlFor="password">Password</CFormLabel>
-                        <Link to="/authentication/reset-password">I forgot password</Link>
+                        <Link to="/authentication/reset-password" style={{ color: '#70B038' }}>
+                          I forgot password
+                        </Link>
                       </div>
                       <CInputGroup>
                         <CFormInput
@@ -74,7 +76,11 @@ const Login = () => {
                       <CFormCheck id="rememberMe" label="Remember me on this device" />
                     </CCol>
                     <CCol xs={12}>
-                      <CButton color="primary" type="submit" className="w-100">
+                      <CButton
+                        type="submit"
+                        className="w-100"
+                        style={{ backgroundColor: '#70B038', borderColor: '#70B038' }}
+                      >
                         Sign in
                       </CButton>
                     </CCol>
@@ -102,7 +108,10 @@ const Login = () => {
                 </CCardBody>
               </CCard>
               <div className="text-center text-body-secondary">
-                Need an account? <Link to="/authentication/register">Sign up</Link>
+                Need an account?{' '}
+                <Link to="/authentication/register" style={{ color: '#70B038' }}>
+                  Sign up
+                </Link>
               </div>
             </div>
           </CCol>
