@@ -51,7 +51,7 @@ import { linkedinBadge } from 'src/assets/brand/linkedin-badge'
 import { twitterX } from 'src/assets/brand/twitter-x'
 
 import DashboardBrand from './DashboardBrand'
-import WidgetsDropdown from '../widgets/WidgetsDropdown'
+import WidgetsDropdown from './WidgetsDropdown'
 import MainChart from './MainChart'
 
 const Dashboard = () => {
