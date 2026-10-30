@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,6 +29,24 @@ public class JwtService { // JwtService define la información y duración del t
         Instant now = Instant.now();
         Instant expiresAt = now.plus(TOKEN_DURATION);
 
+        List<String> roles = user.getUserRoles() != null
+                ? user.getUserRoles().stream()
+                        .map(ur -> ur.getRole().getName())
+                        .distinct()
+                        .toList()
+                : List.of();
+
+        List<String> permissions = user.getUserRoles() != null
+                ? user.getUserRoles().stream()
+                        .map(ur -> ur.getRole())
+                        .filter(role -> role != null && role.getRolePermissions() != null)
+                        .flatMap(role -> role.getRolePermissions().stream())
+                        .filter(rp -> rp != null && rp.getPermission() != null)
+                        .map(rp -> rp.getPermission().getMethod() + ":" + rp.getPermission().getUrl())
+                        .distinct()
+                        .toList()
+                : List.<String>of();
+
         JwtClaimsSet claims = JwtClaimsSet.builder() // Los claims son la información pública que viajará dentro del token
                 .issuer("ms-security") // Emisor
                 .subject(user.getId().toString()) // sub Id estable del usuario
@@ -35,6 +54,8 @@ public class JwtService { // JwtService define la información y duración del t
                 .expiresAt(expiresAt) // momento de expiración
                 .id(UUID.randomUUID().toString()) // jti identificador unico del token
                 .claim("email", user.getEmail()) // dato informativo email
+                .claim("roles", roles)
+                .claim("permissions", permissions)
                 .build();
 
 // Nunca debemos incluir la contraseña en el JWT.

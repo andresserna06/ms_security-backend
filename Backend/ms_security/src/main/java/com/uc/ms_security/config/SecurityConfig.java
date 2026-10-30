@@ -30,12 +30,14 @@ public class SecurityConfig {
                         )
                 )
 
-                .authorizeHttpRequests(auth -> auth // Define quién puede entrar a qué lugares:
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/login" // Deja la puerta del login abierta al público. Cualquiera puede intentar entrar sin tener un token previo (de lo contrario, ¡nadie podría iniciar sesión!)
+                                "/api/auth/login",
+                                "/api/auth/verify-2fa",
+                                "/api/auth/logout"
                         ).permitAll()
 
-                        .anyRequest().authenticated() // Cierra con candado absoluto todas las demás rutas de tu API. Nadie pasa sin estar autenticado
+                        .anyRequest().authenticated()
                 )
 
                 .oauth2ResourceServer(resourceServer ->
