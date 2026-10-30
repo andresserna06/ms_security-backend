@@ -34,12 +34,18 @@ const parseResponse = async (response) => {
   return data
 }
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('accessToken') || localStorage.getItem('token')
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
 export const apiClient = {
   get: async (endpoint) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
+        ...getAuthHeaders(),
       },
     })
     return parseResponse(response)
@@ -51,6 +57,7 @@ export const apiClient = {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
+        ...getAuthHeaders(),
       },
       body: JSON.stringify(body),
     })
@@ -63,6 +70,7 @@ export const apiClient = {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
+        ...getAuthHeaders(),
       },
       body: JSON.stringify(body),
     })
@@ -74,6 +82,7 @@ export const apiClient = {
       method: 'PATCH',
       headers: {
         Accept: 'application/json',
+        ...getAuthHeaders(),
       },
     }
     if (body !== null) {
@@ -89,6 +98,7 @@ export const apiClient = {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
+        ...getAuthHeaders(),
       },
     })
     return parseResponse(response)
