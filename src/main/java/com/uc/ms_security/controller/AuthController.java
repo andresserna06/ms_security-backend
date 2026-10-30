@@ -5,9 +5,12 @@ import com.uc.ms_security.dto.auth.GoogleLoginRequestDTO;
 import com.uc.ms_security.dto.auth.LoginInitResponseDTO;
 import com.uc.ms_security.dto.auth.LoginRequestDTO;
 import com.uc.ms_security.dto.auth.Verify2FaRequestDTO;
+import com.uc.ms_security.dto.user.CreateUserDTO;
+import com.uc.ms_security.dto.user.UserResponseDTO;
 import com.uc.ms_security.entity.AuthProvider;
 import com.uc.ms_security.service.AuthService;
 import com.uc.ms_security.service.OAuthService;
+import com.uc.ms_security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,13 @@ public class AuthController {
 
     private final AuthService authService;
     private final OAuthService oAuthService;
+    private final UserService userService;
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponseDTO register(@Valid @RequestBody CreateUserDTO dto) {
+        return userService.create(dto);
+    }
 
     @PostMapping("/login")
     public LoginInitResponseDTO login(@Valid @RequestBody LoginRequestDTO dto) {

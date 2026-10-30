@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
@@ -122,8 +123,10 @@ public class AuthService {
         // Generar el token JWT con roles y permisos
         AuthResponseDTO authResponse = jwtService.generateToken(user);
 
-        // Almacenar el token emitido en la sesión
+        // Almacenar el token emitido en la sesión y actualizar su expiración a la del JWT (15 min)
         session.setToken(authResponse.accessToken());
+        session.setExpiration(LocalDateTime.ofInstant(
+                authResponse.expiresAt(), ZoneId.systemDefault()));
         sessionRepository.save(session);
 
         return authResponse;

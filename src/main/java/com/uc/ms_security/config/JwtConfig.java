@@ -5,10 +5,16 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.uc.ms_security.repository.SessionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
@@ -18,6 +24,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 @Configuration // Esta anotación le dice a Spring que lea este archivo apenas encienda 
 public class JwtConfig {
@@ -61,16 +68,31 @@ public class JwtConfig {
 
     @Bean
     public JwtDecoder jwtDecoder( // Validador de tokens
-            SecretKey jwtSecretKey) { 
+            SecretKey jwtSecretKey,
+            SessionRepository sessionRepository) { 
 
         NimbusJwtDecoder decoder = NimbusJwtDecoder
                 .withSecretKey(jwtSecretKey) // Para verificar las firmas, vas a usar esta llave y vas a aplicar el algoritmo matemático HS256
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
 
-        decoder.setJwtValidator( // esta línea añade una capa extra de seguridad: le ordena revisar que el emisor (Issuer) del token sea obligatoriamente "ms-security"
-                JwtValidators.createDefaultWithIssuer(
-                        "ms-security"
+        OAuth2TokenValidator<Jwt> issuerAndTimestampValidator =
+                JwtValidators.createDefaultWithIssuer("ms-security");
+
+        // Valida que la sesión asociada al token exista en BD y no haya sido cerrada (logout) ni expirada
+        OAuth2TokenValidator<Jwt> activeSessionValidator = jwt ->
+                sessionRepository.findByToken(jwt.getTokenValue())
+                        .filter(session -> session.getExpiration() != null
+                                && session.getExpiration().isAfter(LocalDateTime.now()))
+                        .map(session -> OAuth2TokenValidatorResult.success())
+                        .orElseGet(() -> OAuth2TokenValidatorResult.failure(
+                                new OAuth2Error("invalid_token", "La sesión ha expirado o fue cerrada", null)
+                        ));
+
+        decoder.setJwtValidator( // esta línea añade una capa extra de seguridad: le ordena revisar que el emisor (Issuer) del token sea obligatoriamente "ms-security" y que la sesión siga activa en BD
+                new DelegatingOAuth2TokenValidator<>(
+                        issuerAndTimestampValidator,
+                        activeSessionValidator
                 )
         );
 
