@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/verify-2fa",
+                                "/api/auth/google",
                                 "/api/auth/logout"
                         ).permitAll()
 

@@ -4,6 +4,7 @@ import com.uc.ms_security.dto.auth.AuthResponseDTO;
 import com.uc.ms_security.dto.auth.LoginInitResponseDTO;
 import com.uc.ms_security.dto.auth.LoginRequestDTO;
 import com.uc.ms_security.dto.auth.Verify2FaRequestDTO;
+import com.uc.ms_security.entity.AuthProvider;
 import com.uc.ms_security.entity.Session;
 import com.uc.ms_security.entity.User;
 import com.uc.ms_security.exception.ApplicationException;
@@ -39,6 +40,14 @@ public class AuthService {
             throw new ApplicationException(
                     ErrorCase.UNAUTHORIZED,
                     "El usuario se encuentra inhabilitado"
+            );
+        }
+
+        // Las cuentas creadas con un proveedor externo (OAuth) no tienen contraseña de la plataforma
+        if (user.getAuthProvider() != AuthProvider.LOCAL || user.getPassword() == null) {
+            throw new ApplicationException(
+                    ErrorCase.UNAUTHORIZED,
+                    "Esta cuenta fue registrada con " + user.getAuthProvider() + ". Inicie sesión con ese proveedor."
             );
         }
 
