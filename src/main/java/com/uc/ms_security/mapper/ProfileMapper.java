@@ -17,6 +17,9 @@ public class ProfileMapper {
 
         profile.setPhone(dto.getPhone());
         profile.setBirthDate(dto.getBirthDate());
+        profile.setPhoto(dto.getPhoto());
+        profile.setCity(dto.getCity());
+        profile.setBio(dto.getBio());
         profile.setUser(user);
 
         return profile;
@@ -25,6 +28,9 @@ public class ProfileMapper {
     public void updateEntity(UpdateProfileDTO dto, Profile profile) {
         profile.setPhone(dto.getPhone());
         profile.setBirthDate(dto.getBirthDate());
+        profile.setPhoto(dto.getPhoto());
+        profile.setCity(dto.getCity());
+        profile.setBio(dto.getBio());
     }
 
     public ProfileResponseDTO toResponseDTO(Profile profile) {
@@ -35,7 +41,11 @@ public class ProfileMapper {
         return new ProfileResponseDTO(
                 profile.getId(),
                 profile.getPhone(),
-                profile.getBirthDate()
+                profile.getBirthDate(),
+                profile.getPhoto(),
+                profile.getCity(),
+                profile.getBio(),
+                profile.getUser() != null ? profile.getUser().getId() : null
         );
     }
 

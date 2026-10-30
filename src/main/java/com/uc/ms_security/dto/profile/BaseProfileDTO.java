@@ -32,4 +32,18 @@ public abstract class BaseProfileDTO { // ProfileRequestDTO
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
+
+    private String photo;
+
+    @Size(
+            max = 100,
+            message = "La ciudad no puede superar los 100 caracteres"
+    )
+    private String city;
+
+    @Size(
+            max = 500,
+            message = "La descripción no puede superar los 500 caracteres"
+    )
+    private String bio;
 }
