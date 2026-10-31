@@ -40,7 +40,9 @@ public class SecurityConfig {
                                 "/api/auth/logout"
                         ).permitAll()
 
-                        .anyRequest().authenticated()
+                        // TODO: Descomentar .anyRequest().authenticated() cuando los servicios del frontend envíen el token en el header
+                        // .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
 
                 .oauth2ResourceServer(resourceServer ->
