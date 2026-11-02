@@ -53,7 +53,7 @@ public class GoogleOAuthProviderImpl implements OAuthProviderStrategy {
     }
 
     @Override
-    public OAuthUserProfile verifyAndExtractUser(String idToken) {
+    public OAuthUserProfile verifyAndExtractUser(String credential) {
         if (clientId == null || clientId.isBlank()) {
             log.error("No se ha configurado security.oauth.google.client-id (GOOGLE_CLIENT_ID)");
             throw new ApplicationException(
@@ -64,7 +64,7 @@ public class GoogleOAuthProviderImpl implements OAuthProviderStrategy {
 
         Jwt jwt;
         try {
-            jwt = googleJwtDecoder.decode(idToken);
+            jwt = googleJwtDecoder.decode(credential);
         } catch (JwtException ex) {
             log.warn("idToken de Google rechazado: {}", ex.getMessage());
             throw invalidToken();
