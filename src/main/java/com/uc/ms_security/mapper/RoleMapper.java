@@ -1,6 +1,6 @@
 package com.uc.ms_security.mapper;
 
-import com.uc.ms_security.dto.RolePermissionsResponseDTO;
+import com.uc.ms_security.dto.permission.RolePermissionsResponseDTO;
 import com.uc.ms_security.dto.role.RoleRequestDTO;
 import com.uc.ms_security.dto.role.RoleResponseDTO;
 import com.uc.ms_security.entity.Role;
@@ -34,8 +34,7 @@ public class RoleMapper {
         return new RoleResponseDTO(
                 role.getId(),
                 role.getName(),
-                role.getDescription()
-        );
+                role.getDescription());
     }
 
     public List<RoleResponseDTO> toResponseDTOList(
@@ -52,8 +51,6 @@ public class RoleMapper {
                 role.getName(),
                 role.getDescription(),
                 rolePermissionMapper.toResponseDTOList(
-                        role.getRolePermissions()
-                )
-        );
+                        role.getRolePermissions()));
     }
 }

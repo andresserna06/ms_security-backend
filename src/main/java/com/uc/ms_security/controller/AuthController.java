@@ -1,6 +1,7 @@
 package com.uc.ms_security.controller;
 
 import com.uc.ms_security.dto.auth.AuthResponseDTO;
+import com.uc.ms_security.dto.auth.AzureLoginRequestDTO;
 import com.uc.ms_security.dto.auth.GoogleLoginRequestDTO;
 import com.uc.ms_security.dto.auth.LoginInitResponseDTO;
 import com.uc.ms_security.dto.auth.LoginRequestDTO;
@@ -49,6 +50,11 @@ public class AuthController {
     @PostMapping("/google")
     public AuthResponseDTO loginWithGoogle(@Valid @RequestBody GoogleLoginRequestDTO dto) {
         return oAuthService.loginWithProvider(AuthProvider.GOOGLE, dto.getIdToken());
+    }
+
+    @PostMapping("/azure")
+    public AuthResponseDTO loginWithAzure(@Valid @RequestBody AzureLoginRequestDTO dto) {
+        return oAuthService.loginWithProvider(AuthProvider.AZURE, dto.getIdToken());
     }
 
     @PostMapping("/logout")
