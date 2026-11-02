@@ -25,11 +25,20 @@ public class User {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(nullable = false, length = 255)
+    // Nullable: los usuarios autenticados mediante OAuth no tienen contraseña propia de la plataforma
+    @Column(nullable = true, length = 255)
     private String password;
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "auth_provider",
+            nullable = false,
+            columnDefinition = "VARCHAR(20) NOT NULL DEFAULT 'LOCAL'"
+    )
+    private AuthProvider authProvider = AuthProvider.LOCAL;
 
     @OneToOne(
             mappedBy = "user",

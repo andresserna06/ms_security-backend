@@ -1,0 +1,856 @@
+{
+  "info": {
+    "_postman_id": "19016904-9f8a-4832-8ec7-16a77e99f61b",
+    "name": "Security",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "5179140"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "findAll",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0teg}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findByIdDetail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}}}/profile",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}}}",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Juan Pérez\",\r\n  \"email\": \"juan2@gmail.com\",\r\n  \"password\": \"12345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/users",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Juan Pérez Modi\",\r\n  \"email\": \"juan2@gmail.com\",\r\n  \"password\": \"12345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/users/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "roles",
+      "item": [
+        {
+          "name": "findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/roles",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/roles/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "roles",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"ADMIN\",\r\n  \"description\": \"Administra usuarios, roles y permisos\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/roles",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"ADMIN\",\r\n  \"description\": \"Administra usuarios, roles y permisoss\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/roles/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "roles",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/roles/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "roles",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "profiles",
+      "item": [
+        {
+          "name": "findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"phone\": \"3001234567\",\r\n  \"birthDate\": \"1995-05-20\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}/profile",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"phone\": \"3001234567\",\r\n  \"birthDate\": \"2000-05-20\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}/profile",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}/profile",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "sessions",
+      "item": [
+        {
+          "name": "list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}/sessions",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "sessions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}/sessions/{{sessionId}}",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "sessions",
+                "{{sessionId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"token\": \"token-iphone-14-pro\",\r\n  \"expiration\": \"2026-08-29T18:30:00\",\r\n  \"code2FA\": \"381924\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}/sessions",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "sessions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"token\": \"token-iphone-14-pro\",\r\n  \"expiration\": \"2026-08-29T18:30:00\",\r\n  \"code2FA\": \"111111\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}/sessions/{{sessionId}}",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "sessions",
+                "{{sessionId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users/{{userId}}/sessions/{{sessionId}}",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "sessions",
+                "{{sessionId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user-role",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userId\": 3,\r\n  \"roleId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/user-roles",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "user-roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list-roles-by-user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/user-roles/users/{{userId}}",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "user-roles",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list-users-by-role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/user-roles/roles/{{roleId}}",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "user-roles",
+                "roles",
+                "{{roleId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/user-roles",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "user-roles"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "permissions",
+      "item": [
+        {
+          "name": "findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/users",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/permissions/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"url\": \"/api/users\",\r\n  \"method\": \"GET\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/users",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"url\": \"/users\",\r\n  \"method\": \"GET\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/permissions/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/permissions/1",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "role-permission",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"roleId\": 1,\r\n  \"permissionId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/role-permissions",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "role-permissions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list-permissions-by-role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/role-permissions/roles/{{roleId}}",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "role-permissions",
+                "roles",
+                "{{roleId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list-roles-by-permission",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/role-permissions/permissions/{{permisIiond}}",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "role-permissions",
+                "permissions",
+                "{{permisIiond}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{security_ms}}/api/role-permissions",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "role-permissions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"admin@uc.edu.co\",\r\n  \"password\": \"Admin123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{security_ms}}/api/auth/login",
+              "host": [
+                "{{security_ms}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "security_ms",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "sessionId",
+      "value": ""
+    },
+    {
+      "key": "roleId",
+      "value": ""
+    },
+    {
+      "key": "permisIiond",
+      "value": ""
+    },
+    {
+      "key": "json_web_token_0teg",
+      "secret": true
+    }
+  ]
+}
+

@@ -21,9 +21,7 @@ public class Session {
     private Long id;
 
     @Column(
-            nullable = false,
-            unique = true,
-            length = 500
+            length = 2048
     )
     private String token;
 
@@ -37,6 +35,11 @@ public class Session {
             length = 10
     )
     private String code2FA;
+
+    @Column(
+        name = "is_code_used" 
+    )
+    private boolean isCodeUsed = false;
 
     @ManyToOne(
             fetch = FetchType.LAZY,

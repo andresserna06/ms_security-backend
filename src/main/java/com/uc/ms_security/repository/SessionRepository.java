@@ -22,4 +22,11 @@ public interface SessionRepository
             String token,
             Long id
     );
+
+    Optional<Session> findTopByUser_EmailOrderByIdDesc(String email);
+
+    Optional<Session> findTopByUserIdOrderByIdDesc(Long userId);
+
+    Optional<Session> findByToken(String token);
 }
+
