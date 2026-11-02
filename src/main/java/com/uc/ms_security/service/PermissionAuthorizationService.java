@@ -1,12 +1,15 @@
+
 package com.uc.ms_security.service;
 
 import com.uc.ms_security.entity.Permission;
 import com.uc.ms_security.repository.PermissionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.server.PathContainer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
+import org.springframework.web.util.pattern.PatternParseException;
 
 import java.util.List;
 
@@ -25,23 +28,41 @@ public class PermissionAuthorizationService {
             String requestUrl,
             String requestMethod
     ) {
+        if (userId == null || requestUrl == null || requestMethod == null) {
+            return false;
+        }
+
         List<Permission> permissions =
                 permissionRepository.findAllByUserId(userId);
 
-        return permissions.stream().anyMatch(permission -> {
+        PathContainer requestPath =
+                PathContainer.parsePath(requestUrl);
 
-            if (!permission.getMethod().equalsIgnoreCase(requestMethod)) {
-                return false;
+        for (Permission permission : permissions) {
+
+            if (permission.getUrl() == null
+                    || permission.getMethod() == null) {
+                continue;
             }
 
-            PathPattern pattern = pathPatternParser.parse(
-                    permission.getUrl()
-            );
+            if (!permission.getMethod().equalsIgnoreCase(requestMethod)) {
+                continue;
+            }
 
-            return pattern.matches(
-                    org.springframework.http.server
-                            .PathContainer.parsePath(requestUrl)
-            );
-        });
+            try {
+                PathPattern pattern =
+                        pathPatternParser.parse(permission.getUrl());
+
+                if (pattern.matches(requestPath)) {
+                    return true;
+                }
+
+            } catch (PatternParseException exception) {
+                // Un patrón inválido no concede autorización.
+                continue;
+            }
+        }
+
+        return false;
     }
 }
