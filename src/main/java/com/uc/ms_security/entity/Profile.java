@@ -21,15 +21,14 @@ public class Profile {
     private Long id;
 
     @Column(
-            nullable = false,
-            unique = true,
+            nullable = true,
             length = 20
     )
     private String phone;
 
     @Column(
             name = "birth_date",
-            nullable = false
+            nullable = true
     )
     private LocalDate birthDate;
 

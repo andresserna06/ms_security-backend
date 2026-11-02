@@ -54,6 +54,8 @@ public class JwtService { // JwtService define la información y duración del t
                 .expiresAt(expiresAt) // momento de expiración
                 .id(UUID.randomUUID().toString()) // jti identificador unico del token
                 .claim("email", user.getEmail()) // dato informativo email
+                .claim("name", user.getName() != null ? user.getName() : "")
+                .claim("authProvider", user.getAuthProvider() != null ? user.getAuthProvider().name() : "LOCAL")
                 .claim("roles", roles)
                 .claim("permissions", permissions)
                 .build();
