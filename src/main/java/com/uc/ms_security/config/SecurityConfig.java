@@ -7,51 +7,65 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() { 
-        return new BCryptPasswordEncoder(12); // Define que el sistema usará el algoritmo BCrypt (con nivel de fuerza 12) para proteger las contraseñas
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder(12); // Define que el sistema usará el algoritmo BCrypt (con nivel de
+                                                      // fuerza 12) para proteger las contraseñas
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(
+                        HttpSecurity http) throws Exception {
 
-        http
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
+                http
+                                .cors(Customizer.withDefaults())
+                                .csrf(csrf -> csrf.disable())
 
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS // El servidor no recordará quién inició sesión hace cinco minutos. Por lo tanto, el usuario está obligado a presentar su token JWT en cada una de las peticiones que haga.
-                        )
-                )
+                                .sessionManagement(session -> session.sessionCreationPolicy(
+                                                SessionCreationPolicy.STATELESS // El servidor no recordará quién inició
+                                                                                // sesión hace cinco minutos. Por lo
+                                                                                // tanto, el usuario está obligado a
+                                                                                // presentar su token JWT en cada una de
+                                                                                // las peticiones que haga.
+                                ))
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/register",
-                                "/api/auth/login",
-                                "/api/auth/verify-2fa",
-                                "/api/auth/google",
-                                "/api/auth/github",
-                                "/api/auth/logout"
-                        ).permitAll()
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                                "/api/auth/register",
+                                                                "/api/auth/login",
+                                                                "/api/auth/verify-2fa",
+                                                                "/api/auth/google",
+                                                                "/api/auth/github",
+                                                                "/api/auth/logout")
+                                                .permitAll()
+                                                // del frontend envíen el token en el header
+                                                .anyRequest().authenticated()
+                                // .anyRequest().permitAll()
+                                )
 
-                        // TODO: Descomentar .anyRequest().authenticated() cuando los servicios del frontend envíen el token en el header
-                        // .anyRequest().authenticated()
-                        .anyRequest().permitAll()
-                )
+                                .oauth2ResourceServer(resourceServer -> resourceServer
+                                                .jwt(jwt -> jwt
+                                                                .jwtAuthenticationConverter(
+                                                                                jwtAuthenticationConverter())));
 
-                .oauth2ResourceServer(resourceServer ->
-                        resourceServer.jwt(
-                                Customizer.withDefaults()
-                        )
-                );
+                return http.build();
+        }
 
-        return http.build();
-    }
+        @Bean
+        public JwtAuthenticationConverter jwtAuthenticationConverter() {
+                JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();
+                authorities.setAuthoritiesClaimName("roles");
+                authorities.setAuthorityPrefix("ROLE_"); // usa "" si tu claim ya trae "ROLE_ADMIN"
+
+                JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+                converter.setJwtGrantedAuthoritiesConverter(authorities);
+                return converter;
+        }
 }
