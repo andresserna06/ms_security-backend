@@ -36,15 +36,44 @@ public class NotificationService {
                 code
         );
 
+        sendEmail(toEmail, "Tu código de verificación 2FA - JPA Sports", htmlContent);
+    }
+
+    public void sendPasswordResetLink(String toEmail, String resetLink, String userName) {
+        String displayName = (userName != null && !userName.isBlank()) ? userName : "Usuario";
+        String htmlContent = String.format(
+                "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;\">" +
+                "<h2 style=\"color: #2c3e50;\">Recuperación de Contraseña</h2>" +
+                "<p>Hola <strong>%s</strong>,</p>" +
+                "<p>Hemos recibido una solicitud para restablecer la contraseña asociada a tu cuenta en <strong>JPA Sports</strong>.</p>" +
+                "<p>Para definir tu nueva contraseña, haz clic en el siguiente botón:</p>" +
+                "<div style=\"text-align: center; margin: 30px 0;\">" +
+                "<a href=\"%s\" style=\"background-color: #70B038; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;\">Restablecer Contraseña</a>" +
+                "</div>" +
+                "<p>O si prefieres, copia y pega este enlace en tu navegador:</p>" +
+                "<p style=\"word-break: break-all; color: #555;\"><a href=\"%s\" style=\"color: #70B038;\">%s</a></p>" +
+                "<hr style=\"border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;\" />" +
+                "<p style=\"font-size: 12px; color: #7f8c8d;\">Este enlace es de uso único y tiene una validez de <strong>15 minutos</strong>. Si tú no realizaste esta solicitud, puedes ignorar este mensaje; tu cuenta permanecerá segura.</p>" +
+                "</div>",
+                escapeJson(displayName),
+                resetLink,
+                resetLink,
+                resetLink
+        );
+
+        sendEmail(toEmail, "Recuperación de contraseña - JPA Sports", htmlContent);
+    }
+
+    private void sendEmail(String toEmail, String subject, String htmlContent) {
         String jsonPayload = String.format(
                 "{\"to\":\"%s\",\"subject\":\"%s\",\"html_content\":\"%s\"}",
                 escapeJson(toEmail),
-                escapeJson("Tu código de verificación 2FA - JPA Sports"),
+                escapeJson(subject),
                 escapeJson(htmlContent)
         );
 
         try {
-            log.info("Despachando notificación 2FA hacia ms_notificaciones: {}", jsonPayload);
+            log.info("Despachando notificación hacia ms_notificaciones: {}", jsonPayload);
 
             restClient.post()
                     .uri("/send-email")
@@ -52,12 +81,12 @@ public class NotificationService {
                     .body(jsonPayload)
                     .retrieve()
                     .toBodilessEntity();
-            log.info("Código 2FA enviado exitosamente a {}", toEmail);
+            log.info("Correo enviado exitosamente a {}", toEmail);
         } catch (Exception ex) {
-            log.error("Error al comunicarse con ms_notificaciones al enviar 2FA a {}: {}", toEmail, ex.getMessage(), ex);
+            log.error("Error al comunicarse con ms_notificaciones para {}: {}", toEmail, ex.getMessage(), ex);
             throw new ApplicationException(
                     ErrorCase.INVALID_OPERATION,
-                    "No fue posible enviar el código de verificación al correo. Intente más tarde."
+                    "No fue posible enviar la notificación por correo. Intente más tarde."
             );
         }
     }
@@ -72,4 +101,3 @@ public class NotificationService {
                   .replace("\r", "\\r");
     }
 }
-

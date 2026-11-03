@@ -37,6 +37,9 @@ public class SecurityConfig {
                                 "/api/auth/login",
                                 "/api/auth/verify-2fa",
                                 "/api/auth/google",
+                                "/api/auth/azure",
+                                "/api/auth/forgot-password",
+                                "/api/auth/reset-password",
                                 "/api/auth/logout"
                         ).permitAll()
 
