@@ -2,9 +2,11 @@ package com.uc.ms_security.controller;
 
 import com.uc.ms_security.dto.auth.AuthResponseDTO;
 import com.uc.ms_security.dto.auth.AzureLoginRequestDTO;
+import com.uc.ms_security.dto.auth.ForgotPasswordRequestDTO;
 import com.uc.ms_security.dto.auth.GoogleLoginRequestDTO;
 import com.uc.ms_security.dto.auth.LoginInitResponseDTO;
 import com.uc.ms_security.dto.auth.LoginRequestDTO;
+import com.uc.ms_security.dto.auth.ResetPasswordRequestDTO;
 import com.uc.ms_security.dto.auth.Verify2FaRequestDTO;
 import com.uc.ms_security.dto.user.CreateUserDTO;
 import com.uc.ms_security.dto.user.UserResponseDTO;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -55,6 +59,16 @@ public class AuthController {
     @PostMapping("/azure")
     public AuthResponseDTO loginWithAzure(@Valid @RequestBody AzureLoginRequestDTO dto) {
         return oAuthService.loginWithProvider(AuthProvider.AZURE, dto.getIdToken());
+    }
+
+    @PostMapping("/forgot-password")
+    public Map<String, String> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO dto) {
+        return authService.forgotPassword(dto);
+    }
+
+    @PostMapping("/reset-password")
+    public Map<String, String> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO dto) {
+        return authService.resetPassword(dto);
     }
 
     @PostMapping("/logout")
