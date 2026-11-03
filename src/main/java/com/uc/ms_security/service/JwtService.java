@@ -31,6 +31,7 @@ public class JwtService { // JwtService define la información y duración del t
 
         List<String> roles = user.getUserRoles() != null
                 ? user.getUserRoles().stream()
+                        .filter(ur -> ur != null && ur.getRole() != null && ur.getRole().getName() != null)
                         .map(ur -> ur.getRole().getName())
                         .distinct()
                         .toList()
@@ -38,6 +39,7 @@ public class JwtService { // JwtService define la información y duración del t
 
         List<String> permissions = user.getUserRoles() != null
                 ? user.getUserRoles().stream()
+                        .filter(ur -> ur != null && ur.getRole() != null)
                         .map(ur -> ur.getRole())
                         .filter(role -> role != null && role.getRolePermissions() != null)
                         .flatMap(role -> role.getRolePermissions().stream())
