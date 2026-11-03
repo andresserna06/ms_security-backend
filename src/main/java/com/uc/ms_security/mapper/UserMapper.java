@@ -41,13 +41,11 @@ public class UserMapper {
     }
 
     public UserResponseDTO toResponseDTO(User user) {
-        String photo = (user.getProfile() != null) ? user.getProfile().getPhoto() : null;
         return new UserResponseDTO(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getActive(),
-                photo
+                user.getActive()
         );
     }
 
@@ -59,6 +57,12 @@ public class UserMapper {
                 user.getActive(),
                 profileMapper.toResponseDTO(user.getProfile())
         );
+    }
+
+    public List<UserDetailResponseDTO> toDetailResponseDTOList(List<User> users) {
+        return users.stream()
+                .map(this::toDetailResponseDTO)
+                .toList();
     }
 
     // Mapeo para obtener usuario con sus sessiones 

@@ -8,5 +8,4 @@ public class UserResponseDTO {
     String name;
     String email;
     Boolean active;
-    String photo;
 }
