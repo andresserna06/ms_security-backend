@@ -26,10 +26,21 @@ public class RolePermissionService {
     private final PermissionRepository permissionRepository;
     private final RolePermissionRepository rolePermissionRepository;
     private final RolePermissionMapper rolePermissionMapper;
+    private final RolePermissionAuthorizationService authorizationService;
 
     @Transactional
     public RolePermissionResponseDTO assign(
-            AssignPermissionRequestDTO dto) {
+            AssignPermissionRequestDTO dto,
+            Long userId,
+            String requestUrl,
+            String requestMethod) {
+
+        authorizationService.ensureCanManage(
+                userId,
+                dto.getRoleId(),
+                requestUrl,
+                requestMethod
+        );
 
         Role role = roleRepository.findById(dto.getRoleId())
                 .orElseThrow(
@@ -87,7 +98,20 @@ public class RolePermissionService {
     }
 
     @Transactional
-    public void delete(Long roleId, Long permissionId) {
+    public void delete(
+            Long roleId,
+            Long permissionId,
+            Long userId,
+            String requestUrl,
+            String requestMethod) {
+
+        authorizationService.ensureCanManage(
+                userId,
+                roleId,
+                requestUrl,
+                requestMethod
+        );
+
         RolePermission rolePermission = findAssignment(roleId, permissionId);
 
         rolePermissionRepository.delete(rolePermission);

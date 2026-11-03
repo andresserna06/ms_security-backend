@@ -3,10 +3,15 @@ package com.uc.ms_security.controller;
 import com.uc.ms_security.dto.AssignPermissionRequestDTO;
 import com.uc.ms_security.dto.PermissionRoleResponseDTO;
 import com.uc.ms_security.dto.RolePermissionResponseDTO;
+import com.uc.ms_security.exception.ApplicationException;
+import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.service.RolePermissionService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +26,16 @@ public class RolePermissionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RolePermissionResponseDTO assign(
-            @Valid @RequestBody AssignPermissionRequestDTO dto) {
+            @Valid @RequestBody AssignPermissionRequestDTO dto,
+            @AuthenticationPrincipal Jwt jwt,
+            HttpServletRequest request) {
 
-        return rolePermissionService.assign(dto);
+        return rolePermissionService.assign(
+                dto,
+                currentUserId(jwt),
+                currentRequestUrl(request),
+                request.getMethod()
+        );
     }
 
     @GetMapping
@@ -49,8 +61,39 @@ public class RolePermissionController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
             @PathVariable Long roleId,
-            @PathVariable Long permissionId) {
+            @PathVariable Long permissionId,
+            @AuthenticationPrincipal Jwt jwt,
+            HttpServletRequest request) {
 
-        rolePermissionService.delete(roleId, permissionId);
+        rolePermissionService.delete(
+                roleId,
+                permissionId,
+                currentUserId(jwt),
+                currentRequestUrl(request),
+                request.getMethod()
+        );
+    }
+
+    private Long currentUserId(Jwt jwt) {
+        if (jwt == null || jwt.getSubject() == null) {
+            throw new ApplicationException(
+                    ErrorCase.FORBIDDEN,
+                    "No tienes permisos para modificar este rol"
+            );
+        }
+
+        try {
+            return Long.parseLong(jwt.getSubject());
+        } catch (NumberFormatException exception) {
+            throw new ApplicationException(
+                    ErrorCase.FORBIDDEN,
+                    "No tienes permisos para modificar este rol"
+            );
+        }
+    }
+
+    private String currentRequestUrl(HttpServletRequest request) {
+        return request.getRequestURI()
+                .substring(request.getContextPath().length());
     }
 }

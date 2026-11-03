@@ -10,4 +10,6 @@ public class PermissionResponseDTO {
     String url;
 
     String method;
+
+    String module;
 }

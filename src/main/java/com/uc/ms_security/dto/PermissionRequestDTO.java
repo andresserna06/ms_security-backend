@@ -22,4 +22,11 @@ public class PermissionRequestDTO {
             message = "El método no puede superar 10 caracteres"
     )
     private String method;
+
+    @NotBlank(message = "El módulo es obligatorio")
+    @Size(
+            max = 80,
+            message = "El módulo no puede superar 80 caracteres"
+    )
+    private String module;
 }

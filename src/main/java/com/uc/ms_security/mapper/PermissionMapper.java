@@ -14,6 +14,7 @@ public class PermissionMapper {
         Permission permission = new Permission();
         permission.setUrl(dto.getUrl());
         permission.setMethod(dto.getMethod());
+        permission.setModule(dto.getModule());
         return permission;
     }
 
@@ -23,13 +24,15 @@ public class PermissionMapper {
 
         permission.setUrl(dto.getUrl());
         permission.setMethod(dto.getMethod());
+        permission.setModule(dto.getModule());
     }
 
     public PermissionResponseDTO toResponseDTO(Permission permission) {
         return new PermissionResponseDTO(
                 permission.getId(),
                 permission.getUrl(),
-                permission.getMethod()
+                permission.getMethod(),
+                permission.getModule()
         );
     }
 

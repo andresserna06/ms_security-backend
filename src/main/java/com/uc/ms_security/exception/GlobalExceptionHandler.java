@@ -29,6 +29,7 @@ public class GlobalExceptionHandler {
             case ALREADY_EXISTS -> HttpStatus.CONFLICT;
             case INVALID_OPERATION -> HttpStatus.BAD_REQUEST;
             case UNAUTHORIZED -> HttpStatus.UNAUTHORIZED;
+            case FORBIDDEN -> HttpStatus.FORBIDDEN;
         };
 
         Map<String, String> error = new LinkedHashMap<>();
