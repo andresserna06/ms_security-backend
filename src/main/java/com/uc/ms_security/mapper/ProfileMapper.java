@@ -15,26 +15,26 @@ public class ProfileMapper {
     public Profile toEntity(CreateProfileDTO dto, User user) {
         Profile profile = new Profile();
 
-        profile.setPhone(dto.getPhone());
+        profile.setPhone(normalizeString(dto.getPhone()));
         profile.setBirthDate(dto.getBirthDate());
-        profile.setPhoto(dto.getPhoto());
-        profile.setCity(dto.getCity());
-        profile.setBio(dto.getBio());
+        profile.setPhoto(normalizeString(dto.getPhoto()));
+        profile.setCity(normalizeString(dto.getCity()));
+        profile.setBio(normalizeString(dto.getBio()));
         profile.setUser(user);
 
         return profile;
     }
 
     public void updateEntity(UpdateProfileDTO dto, Profile profile) {
-        profile.setPhone(dto.getPhone());
+        profile.setPhone(normalizeString(dto.getPhone()));
         profile.setBirthDate(dto.getBirthDate());
-        profile.setPhoto(dto.getPhoto());
-        profile.setCity(dto.getCity());
-        profile.setBio(dto.getBio());
+        profile.setPhoto(normalizeString(dto.getPhoto()));
+        profile.setCity(normalizeString(dto.getCity()));
+        profile.setBio(normalizeString(dto.getBio()));
     }
 
     public ProfileResponseDTO toResponseDTO(Profile profile) {
-        if (profile == null) { // Da el caso en que el usuario no tiene perfil, entonces no hay que devolver nada, sino null.
+        if (profile == null) {
             return null;
         }
 
@@ -53,5 +53,12 @@ public class ProfileMapper {
         return profiles.stream()
                 .map(this::toResponseDTO)
                 .toList();
+    }
+
+    private String normalizeString(String val) {
+        if (val == null || val.isBlank()) {
+            return null;
+        }
+        return val.trim();
     }
 }

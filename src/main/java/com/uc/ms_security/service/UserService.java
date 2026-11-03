@@ -12,7 +12,6 @@ import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.mapper.UserMapper;
 import com.uc.ms_security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,6 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -40,9 +38,9 @@ public class UserService {
         return userMapper.toResponseDTO(savedUser);
     }
 
-    public List<UserResponseDTO> findAll() {
+    public List<UserDetailResponseDTO> findAll() {
         List<User> users = userRepository.findAll();
-        return userMapper.toResponseDTOList(users);
+        return userMapper.toDetailResponseDTOList(users);
     }
 
     private User findUser(Long id) {
