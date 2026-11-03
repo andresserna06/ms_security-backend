@@ -15,12 +15,13 @@ public interface OAuthProviderStrategy {
     AuthProvider getProviderName();
 
     /**
-     * Valida el token de identidad emitido por el proveedor y extrae el perfil del usuario.
+     * Valida la credencial emitida por el proveedor y extrae el perfil del usuario.
+     * Google entrega un idToken; GitHub entrega un código de autorización.
      *
-     * @param idToken token de identidad recibido desde el cliente
+     * @param credential credencial recibida desde el cliente (idToken o authorization code)
      * @return perfil neutral del usuario autenticado
-     * @throws com.uc.ms_security.exception.ApplicationException si el token no es válido
+     * @throws com.uc.ms_security.exception.ApplicationException si la credencial no es válida
      */
-    OAuthUserProfile verifyAndExtractUser(String idToken);
+    OAuthUserProfile verifyAndExtractUser(String credential);
 }
 
