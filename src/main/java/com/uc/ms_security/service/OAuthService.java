@@ -2,10 +2,12 @@ package com.uc.ms_security.service;
 
 import com.uc.ms_security.dto.auth.AuthResponseDTO;
 import com.uc.ms_security.entity.AuthProvider;
+import com.uc.ms_security.entity.Profile;
 import com.uc.ms_security.entity.Session;
 import com.uc.ms_security.entity.User;
 import com.uc.ms_security.exception.ApplicationException;
 import com.uc.ms_security.exception.ErrorCase;
+import com.uc.ms_security.repository.ProfileRepository;
 import com.uc.ms_security.repository.SessionRepository;
 import com.uc.ms_security.repository.UserRepository;
 import com.uc.ms_security.service.oauth.OAuthProviderStrategy;
@@ -22,8 +24,7 @@ import java.util.Map;
 /**
  * Orquesta la autenticación con proveedores externos (OAuth).
  * Depende únicamente de la abstracción OAuthProviderStrategy (DIP): Spring
- * inyecta
- * todas las implementaciones disponibles y aquí se indexan por proveedor.
+ * inyecta todas las implementaciones disponibles y aquí se indexan por proveedor.
  */
 @Service
 public class OAuthService {
@@ -31,12 +32,14 @@ public class OAuthService {
     private final Map<AuthProvider, OAuthProviderStrategy> strategies;
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
+    private final ProfileRepository profileRepository;
     private final JwtService jwtService;
 
     public OAuthService(
             List<OAuthProviderStrategy> providerStrategies,
             UserRepository userRepository,
             SessionRepository sessionRepository,
+            ProfileRepository profileRepository,
             JwtService jwtService) {
 
         this.strategies = new EnumMap<>(AuthProvider.class);
@@ -44,6 +47,7 @@ public class OAuthService {
 
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
+        this.profileRepository = profileRepository;
         this.jwtService = jwtService;
     }
 
@@ -59,10 +63,10 @@ public class OAuthService {
         // 1. Validar identidad con el proveedor externo
         OAuthUserProfile profile = strategy.verifyAndExtractUser(idToken);
 
-        // 2. Identificar o aprovisionar al usuario
+        // 2. Identificar o aprovisionar al usuario y sincronizar foto inicial si aplica
         User user = userRepository
                 .findWithRolesAndPermissionsByEmail(profile.email())
-                .map(existing -> validateExistingUser(existing, provider))
+                .map(existing -> validateAndSyncExistingUser(existing, provider, profile))
                 .orElseGet(() -> provisionUser(profile, provider));
 
         // 3. Emitir sesión interna (sin 2FA para OAuth)
@@ -77,6 +81,29 @@ public class OAuthService {
         sessionRepository.save(session);
 
         return authResponse;
+    }
+
+    private User validateAndSyncExistingUser(User user, AuthProvider provider, OAuthUserProfile profile) {
+        validateExistingUser(user, provider);
+
+        // Sincronización inicial de foto: Solo si el usuario NO tiene foto asignada en su perfil
+        // Si el usuario ya personalizó o subió su propia foto, NUNCA se sobreescribe con la del proveedor.
+        Profile userProfile = profileRepository.findByUserId(user.getId()).orElse(null);
+        if (userProfile == null) {
+            if (profile.photoUrl() != null && !profile.photoUrl().isBlank()) {
+                Profile newProfile = new Profile();
+                newProfile.setUser(user);
+                newProfile.setPhoto(profile.photoUrl());
+                profileRepository.save(newProfile);
+                user.setProfile(newProfile);
+            }
+        } else if ((userProfile.getPhoto() == null || userProfile.getPhoto().isBlank())
+                && profile.photoUrl() != null && !profile.photoUrl().isBlank()) {
+            userProfile.setPhoto(profile.photoUrl());
+            profileRepository.save(userProfile);
+        }
+
+        return user;
     }
 
     private User validateExistingUser(User user, AuthProvider provider) {
@@ -113,7 +140,18 @@ public class OAuthService {
         user.setActive(true);
         user.setAuthProvider(provider);
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Asignación inicial de foto al registrarse por primera vez si el proveedor la incluye
+        if (profile.photoUrl() != null && !profile.photoUrl().isBlank()) {
+            Profile userProfile = new Profile();
+            userProfile.setUser(savedUser);
+            userProfile.setPhoto(profile.photoUrl());
+            profileRepository.save(userProfile);
+            savedUser.setProfile(userProfile);
+        }
+
+        return savedUser;
     }
 
     private String resolveName(OAuthUserProfile profile) {
