@@ -59,7 +59,7 @@ public class AuthService {
         if (user.getAuthProvider() != AuthProvider.LOCAL || user.getPassword() == null) {
             throw new ApplicationException(
                     ErrorCase.UNAUTHORIZED,
-                    "Esta cuenta fue registrada con " + user.getAuthProvider() + ". Inicie sesión con ese proveedor."
+                    "Esta cuenta fue registrada con " + formatProviderName(user.getAuthProvider()) + ". Inicie sesión con ese proveedor."
             );
         }
 
@@ -162,7 +162,7 @@ public class AuthService {
         if (user.getAuthProvider() != AuthProvider.LOCAL) {
             throw new ApplicationException(
                     ErrorCase.INVALID_OPERATION,
-                    "Esta cuenta fue registrada mediante " + user.getAuthProvider() +
+                    "Esta cuenta fue registrada mediante " + formatProviderName(user.getAuthProvider()) +
                     ". La recuperación de contraseña no se realiza desde la plataforma; debes gestionar tus credenciales directamente con tu proveedor."
             );
         }
@@ -252,5 +252,17 @@ public class AuthService {
                 ErrorCase.UNAUTHORIZED,
                 "Credenciales o código incorrectos"
         );
+    }
+
+    private String formatProviderName(AuthProvider provider) {
+        if (provider == null) {
+            return "un proveedor externo";
+        }
+        return switch (provider) {
+            case GOOGLE -> "Google";
+            case AZURE, MICROSOFT -> "Microsoft Azure";
+            case GITHUB -> "Github";
+            case LOCAL -> "correo electrónico";
+        };
     }
 }

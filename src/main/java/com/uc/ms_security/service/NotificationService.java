@@ -50,14 +50,10 @@ public class NotificationService {
                 "<div style=\"text-align: center; margin: 30px 0;\">" +
                 "<a href=\"%s\" style=\"background-color: #70B038; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;\">Restablecer Contraseña</a>" +
                 "</div>" +
-                "<p>O si prefieres, copia y pega este enlace en tu navegador:</p>" +
-                "<p style=\"word-break: break-all; color: #555;\"><a href=\"%s\" style=\"color: #70B038;\">%s</a></p>" +
                 "<hr style=\"border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;\" />" +
                 "<p style=\"font-size: 12px; color: #7f8c8d;\">Este enlace es de uso único y tiene una validez de <strong>15 minutos</strong>. Si tú no realizaste esta solicitud, puedes ignorar este mensaje; tu cuenta permanecerá segura.</p>" +
                 "</div>",
                 escapeJson(displayName),
-                resetLink,
-                resetLink,
                 resetLink
         );
 
