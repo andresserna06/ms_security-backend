@@ -20,9 +20,8 @@ public class Session {
     )
     private Long id;
 
-    @Column(
-            length = 2048
-    )
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String token;
 
     @Column(
