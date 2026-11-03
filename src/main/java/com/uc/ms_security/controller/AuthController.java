@@ -3,6 +3,7 @@ package com.uc.ms_security.controller;
 import com.uc.ms_security.dto.auth.AuthResponseDTO;
 import com.uc.ms_security.dto.auth.AzureLoginRequestDTO;
 import com.uc.ms_security.dto.auth.ForgotPasswordRequestDTO;
+import com.uc.ms_security.dto.auth.GithubLoginRequestDTO;
 import com.uc.ms_security.dto.auth.GoogleLoginRequestDTO;
 import com.uc.ms_security.dto.auth.LoginInitResponseDTO;
 import com.uc.ms_security.dto.auth.LoginRequestDTO;
@@ -69,6 +70,11 @@ public class AuthController {
     @PostMapping("/reset-password")
     public Map<String, String> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO dto) {
         return authService.resetPassword(dto);
+    }
+
+    @PostMapping("/github")
+    public AuthResponseDTO loginWithGithub(@Valid @RequestBody GithubLoginRequestDTO dto) {
+        return oAuthService.loginWithProvider(AuthProvider.GITHUB, dto.getCode());
     }
 
     @PostMapping("/logout")
