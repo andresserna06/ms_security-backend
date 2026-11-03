@@ -41,11 +41,13 @@ public class UserMapper {
     }
 
     public UserResponseDTO toResponseDTO(User user) {
+        String photo = (user.getProfile() != null) ? user.getProfile().getPhoto() : null;
         return new UserResponseDTO(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getActive()
+                user.getActive(),
+                photo
         );
     }
 

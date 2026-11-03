@@ -9,7 +9,7 @@ import com.uc.ms_security.exception.ApplicationException;
 import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.mapper.ProfileMapper;
 import com.uc.ms_security.repository.ProfileRepository;
-import com.uc.ms_security.repository.UserRepository; // Inyeccción de dependencias
+import com.uc.ms_security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +24,9 @@ public class ProfileService {
     private final ProfileMapper profileMapper;
 
     public ProfileResponseDTO create(Long userId, CreateProfileDTO dto) {
-        User user = userRepository.findById(userId) // Revisar si existe en la BD
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(
-                        ErrorCase.NOT_FOUND, // Lanzamos nuestras excepciones personalizadas.
+                        ErrorCase.NOT_FOUND,
                         "Usuario no encontrado con ID: " + userId
                 ));
 
@@ -37,13 +37,15 @@ public class ProfileService {
             );
         }
 
-        if (profileRepository.existsByPhone(dto.getPhone())) {
+        String cleanPhone = (dto.getPhone() != null && !dto.getPhone().isBlank()) ? dto.getPhone().trim() : null;
+        if (cleanPhone != null && profileRepository.existsByPhone(cleanPhone)) {
             throw new ApplicationException(
                     ErrorCase.ALREADY_EXISTS,
                     "Ya existe un perfil con este número de teléfono"
             );
         }
 
+        dto.setPhone(cleanPhone);
         Profile profile = profileMapper.toEntity(dto, user);
         Profile savedProfile = profileRepository.save(profile);
         return profileMapper.toResponseDTO(savedProfile);
@@ -77,13 +79,15 @@ public class ProfileService {
     public ProfileResponseDTO update(Long userId, UpdateProfileDTO dto) {
         Profile profile = findProfile(userId);
 
-        if (profileRepository.existsByPhoneAndIdNot(dto.getPhone(), profile.getId())) {
+        String cleanPhone = (dto.getPhone() != null && !dto.getPhone().isBlank()) ? dto.getPhone().trim() : null;
+        if (cleanPhone != null && profileRepository.existsByPhoneAndIdNot(cleanPhone, profile.getId())) {
             throw new ApplicationException(
                     ErrorCase.ALREADY_EXISTS,
                     "El número de teléfono pertenece a otro perfil"
             );
         }
 
+        dto.setPhone(cleanPhone);
         profileMapper.updateEntity(dto, profile);
         Profile updatedProfile = profileRepository.save(profile);
         return profileMapper.toResponseDTO(updatedProfile);
