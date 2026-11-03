@@ -60,7 +60,13 @@ public class GithubOAuthProviderImpl implements OAuthProviderStrategy {
         String email = extractEmail(accessToken, githubUser);
         String name = extractName(githubUser, email);
 
-        return new OAuthUserProfile(email, name);
+        String photoUrl = null;
+        Object avatar = githubUser.get("avatar_url");
+        if (avatar instanceof String avatarStr && !avatarStr.isBlank()) {
+            photoUrl = avatarStr.trim();
+        }
+
+        return new OAuthUserProfile(email, name, photoUrl);
     }
 
     private void validateConfiguration() {
