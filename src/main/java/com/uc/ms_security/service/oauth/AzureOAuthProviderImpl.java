@@ -86,7 +86,8 @@ public class AzureOAuthProviderImpl implements OAuthProviderStrategy {
 
         return new OAuthUserProfile(
                 email.trim().toLowerCase(),
-                name
+                name,
+                jwt.getClaimAsString("picture")
         );
     }
 

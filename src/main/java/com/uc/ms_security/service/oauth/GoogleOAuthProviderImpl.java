@@ -82,7 +82,8 @@ public class GoogleOAuthProviderImpl implements OAuthProviderStrategy {
 
         return new OAuthUserProfile(
                 email.trim().toLowerCase(),
-                jwt.getClaimAsString("name")
+                jwt.getClaimAsString("name"),
+                jwt.getClaimAsString("picture")
         );
     }
 
@@ -115,4 +116,3 @@ public class GoogleOAuthProviderImpl implements OAuthProviderStrategy {
         );
     }
 }
-
