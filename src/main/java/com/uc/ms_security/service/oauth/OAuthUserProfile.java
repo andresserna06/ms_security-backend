@@ -6,7 +6,10 @@ package com.uc.ms_security.service.oauth;
  */
 public record OAuthUserProfile(
         String email,
-        String name
+        String name,
+        String photoUrl
 ) {
+    public OAuthUserProfile(String email, String name) {
+        this(email, name, null);
+    }
 }
-

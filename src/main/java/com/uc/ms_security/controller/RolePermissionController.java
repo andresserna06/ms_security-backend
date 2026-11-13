@@ -1,8 +1,8 @@
 package com.uc.ms_security.controller;
 
-import com.uc.ms_security.dto.AssignPermissionRequestDTO;
-import com.uc.ms_security.dto.PermissionRoleResponseDTO;
-import com.uc.ms_security.dto.RolePermissionResponseDTO;
+import com.uc.ms_security.dto.permission.AssignPermissionRequestDTO;
+import com.uc.ms_security.dto.permission.PermissionRoleResponseDTO;
+import com.uc.ms_security.dto.permission.RolePermissionResponseDTO;
 import com.uc.ms_security.exception.ApplicationException;
 import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.service.RolePermissionService;

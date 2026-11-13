@@ -9,9 +9,11 @@ import com.uc.ms_security.exception.ApplicationException;
 import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.mapper.ProfileMapper;
 import com.uc.ms_security.repository.ProfileRepository;
-import com.uc.ms_security.repository.UserRepository; // Inyeccción de dependencias
+import com.uc.ms_security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,10 +25,16 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final ProfileMapper profileMapper;
 
-    public ProfileResponseDTO create(Long userId, CreateProfileDTO dto) {
-        User user = userRepository.findById(userId) // Revisar si existe en la BD
+    public ProfileResponseDTO create(
+            Long userId,
+            Long requesterId,
+            boolean isAdmin,
+            CreateProfileDTO dto) {
+        validateProfileAccess(userId, requesterId, isAdmin);
+
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(
-                        ErrorCase.NOT_FOUND, // Lanzamos nuestras excepciones personalizadas.
+                        ErrorCase.NOT_FOUND,
                         "Usuario no encontrado con ID: " + userId
                 ));
 
@@ -37,13 +45,15 @@ public class ProfileService {
             );
         }
 
-        if (profileRepository.existsByPhone(dto.getPhone())) {
+        String cleanPhone = (dto.getPhone() != null && !dto.getPhone().isBlank()) ? dto.getPhone().trim() : null;
+        if (cleanPhone != null && profileRepository.existsByPhone(cleanPhone)) {
             throw new ApplicationException(
                     ErrorCase.ALREADY_EXISTS,
                     "Ya existe un perfil con este número de teléfono"
             );
         }
 
+        dto.setPhone(cleanPhone);
         Profile profile = profileMapper.toEntity(dto, user);
         Profile savedProfile = profileRepository.save(profile);
         return profileMapper.toResponseDTO(savedProfile);
@@ -62,7 +72,11 @@ public class ProfileService {
                 ));
     }
 
-    public ProfileResponseDTO findByUserId(Long userId) {
+    public ProfileResponseDTO findByUserId(
+            Long userId,
+            Long requesterId,
+            boolean isAdmin) {
+        validateProfileAccess(userId, requesterId, isAdmin);
         return profileMapper.toResponseDTO(findProfile(userId));
     }
 
@@ -74,22 +88,39 @@ public class ProfileService {
                 )));
     }
 
-    public ProfileResponseDTO update(Long userId, UpdateProfileDTO dto) {
+    public ProfileResponseDTO update(
+            Long userId,
+            Long requesterId,
+            boolean isAdmin,
+            UpdateProfileDTO dto) {
+        validateProfileAccess(userId, requesterId, isAdmin);
+
         Profile profile = findProfile(userId);
 
-        if (profileRepository.existsByPhoneAndIdNot(dto.getPhone(), profile.getId())) {
+        String cleanPhone = (dto.getPhone() != null && !dto.getPhone().isBlank()) ? dto.getPhone().trim() : null;
+        if (cleanPhone != null && profileRepository.existsByPhoneAndIdNot(cleanPhone, profile.getId())) {
             throw new ApplicationException(
                     ErrorCase.ALREADY_EXISTS,
                     "El número de teléfono pertenece a otro perfil"
             );
         }
 
+        dto.setPhone(cleanPhone);
         profileMapper.updateEntity(dto, profile);
         Profile updatedProfile = profileRepository.save(profile);
         return profileMapper.toResponseDTO(updatedProfile);
     }
 
-    public void delete(Long userId) {
+    public void delete(Long userId, Long requesterId, boolean isAdmin) {
+        validateProfileAccess(userId, requesterId, isAdmin);
         profileRepository.delete(findProfile(userId));
+    }
+
+    private void validateProfileAccess(Long userId, Long requesterId, boolean isAdmin) {
+        if (!isAdmin && !userId.equals(requesterId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "No tienes autorización para acceder al perfil de otro usuario");
+        }
     }
 }

@@ -1,8 +1,8 @@
 package com.uc.ms_security.service;
 
-import com.uc.ms_security.dto.AssignPermissionRequestDTO;
-import com.uc.ms_security.dto.PermissionRoleResponseDTO;
-import com.uc.ms_security.dto.RolePermissionResponseDTO;
+import com.uc.ms_security.dto.permission.AssignPermissionRequestDTO;
+import com.uc.ms_security.dto.permission.PermissionRoleResponseDTO;
+import com.uc.ms_security.dto.permission.RolePermissionResponseDTO;
 import com.uc.ms_security.entity.Permission;
 import com.uc.ms_security.entity.Role;
 import com.uc.ms_security.entity.RolePermission;

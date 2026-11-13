@@ -1,7 +1,7 @@
 package com.uc.ms_security.mapper;
 
-import com.uc.ms_security.dto.PermissionRequestDTO;
-import com.uc.ms_security.dto.PermissionResponseDTO;
+import com.uc.ms_security.dto.permission.PermissionRequestDTO;
+import com.uc.ms_security.dto.permission.PermissionResponseDTO;
 import com.uc.ms_security.entity.Permission;
 import org.springframework.stereotype.Component;
 

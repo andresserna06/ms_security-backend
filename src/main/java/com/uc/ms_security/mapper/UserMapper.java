@@ -59,6 +59,12 @@ public class UserMapper {
         );
     }
 
+    public List<UserDetailResponseDTO> toDetailResponseDTOList(List<User> users) {
+        return users.stream()
+                .map(this::toDetailResponseDTO)
+                .toList();
+    }
+
     // Mapeo para obtener usuario con sus sessiones 
     public UserSessionsResponseDTO toSessionsResponseDTO(User user) {
         return new UserSessionsResponseDTO(

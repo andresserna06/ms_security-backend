@@ -21,17 +21,25 @@ public class Profile {
     private Long id;
 
     @Column(
-            nullable = false,
-            unique = true,
+            nullable = true,
             length = 20
     )
     private String phone;
 
     @Column(
             name = "birth_date",
-            nullable = false
+            nullable = true
     )
     private LocalDate birthDate;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String photo;
+
+    @Column(length = 100)
+    private String city;
+
+    @Column(length = 500)
+    private String bio;
 
     // Relación 1 a 1 con User (la clave foránea user_id se aloja en esta tabla)
     @OneToOne(fetch = FetchType.LAZY)

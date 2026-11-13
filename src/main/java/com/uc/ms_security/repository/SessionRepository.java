@@ -2,6 +2,8 @@ package com.uc.ms_security.repository;
 
 import com.uc.ms_security.entity.Session;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,5 +30,8 @@ public interface SessionRepository
     Optional<Session> findTopByUserIdOrderByIdDesc(Long userId);
 
     Optional<Session> findByToken(String token);
-}
 
+    @Modifying
+    @Transactional
+    void deleteByUserId(Long userId);
+}
