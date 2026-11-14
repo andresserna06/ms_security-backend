@@ -22,7 +22,7 @@ public class RolePermissionAuthorizationService {
             "No tienes permisos para modificar este rol";
 
     private final UserRepository userRepository;
-    private final PermissionAuthorizationService permissionAuthorizationService;
+    private final PermissionService permissionService;
 
     public void ensureCanManage(
             Long userId,
@@ -34,10 +34,10 @@ public class RolePermissionAuthorizationService {
             throw forbidden();
         }
 
-        if (!permissionAuthorizationService.hasPermission(
+        if (!permissionService.hasPermission(
                 userId,
-                requestUrl,
-                requestMethod)) {
+                requestMethod,
+                requestUrl)) {
             throw forbidden();
         }
 

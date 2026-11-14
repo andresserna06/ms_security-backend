@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public class PermissionAuthorizationManager
         implements AuthorizationManager<RequestAuthorizationContext> {
 
-    private final PermissionAuthorizationService authorizationService;
+    private final PermissionService permissionService;
 
     @Override
     public AuthorizationResult authorize(
@@ -46,10 +46,10 @@ public class PermissionAuthorizationManager
         String requestMethod = context.getRequest().getMethod();
 
         // Consultamos los permisos actuales en MySQL
-        boolean allowed = authorizationService.hasPermission(
+        boolean allowed = permissionService.hasPermission(
                 userId,
-                requestUrl,
-                requestMethod);
+                requestMethod,
+                requestUrl);
 
         return new AuthorizationDecision(allowed);
     }
