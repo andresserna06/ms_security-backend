@@ -1,5 +1,6 @@
 package com.uc.ms_security.config;
 
+import com.uc.ms_security.authorization.DynamicAuthorizationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -21,7 +22,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
+            HttpSecurity http,
+            DynamicAuthorizationManager dynamicAuthorizationManager
     ) throws Exception {
         http
             .cors(Customizer.withDefaults())
@@ -41,9 +43,7 @@ public class SecurityConfig {
                     "/api/auth/reset-password",
                     "/api/auth/logout"
                 ).permitAll()
-                // El frontend envía el token en el header.
-                .anyRequest().authenticated()
-                // .anyRequest().permitAll()
+                .anyRequest().access(dynamicAuthorizationManager)
             )
             .oauth2ResourceServer(resourceServer -> resourceServer
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
