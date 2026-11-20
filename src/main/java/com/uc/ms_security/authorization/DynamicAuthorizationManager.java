@@ -1,5 +1,7 @@
 package com.uc.ms_security.authorization;
 
+import com.uc.ms_security.service.PermissionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.PathContainer;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
@@ -16,9 +18,11 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 @Component
+@RequiredArgsConstructor
 public class DynamicAuthorizationManager
         implements AuthorizationManager<RequestAuthorizationContext> {
 
+    private final PermissionService permissionService;
     private final PathPatternParser pathPatternParser = new PathPatternParser();
 
     @Override
@@ -32,8 +36,10 @@ public class DynamicAuthorizationManager
             return new AuthorizationDecision(false);
         }
 
+        Long userId;
+
         try {
-            Long.parseLong(jwtAuthentication.getName());
+            userId = Long.parseLong(jwtAuthentication.getName());
         } catch (NumberFormatException exception) {
             return new AuthorizationDecision(false);
         }
@@ -48,44 +54,62 @@ public class DynamicAuthorizationManager
         String requestUrl = requestUri.substring(contextPath.length());
         String requestMethod = context.getRequest().getMethod();
 
-        Object permissionsClaim =
-                jwtAuthentication.getToken().getClaims().get("permissions");
-        if (!(permissionsClaim instanceof Collection<?> permissions)) {
+        boolean tokenAllowsRequest = hasTokenPermission(
+                jwtAuthentication,
+                requestMethod,
+                requestUrl);
+        if (!tokenAllowsRequest) {
             return new AuthorizationDecision(false);
+        }
+
+        boolean roleAllowsRequest = permissionService.hasPermission(
+                userId,
+                requestMethod,
+                requestUrl);
+
+        return new AuthorizationDecision(roleAllowsRequest);
+    }
+
+    private boolean hasTokenPermission(
+            JwtAuthenticationToken authentication,
+            String requestMethod,
+            String requestUrl) {
+        Object permissionsClaim =
+                authentication.getToken().getClaims().get("permissions");
+        if (!(permissionsClaim instanceof Collection<?> permissions)) {
+            return false;
         }
 
         PathContainer requestPath;
         try {
             requestPath = PathContainer.parsePath(requestUrl);
         } catch (IllegalArgumentException exception) {
-            return new AuthorizationDecision(false);
+            return false;
         }
+
         for (Object permission : permissions) {
-            if (permission instanceof String permissionValue
-                    && matches(permissionValue, requestMethod, requestPath)) {
-                return new AuthorizationDecision(true);
+            if (!(permission instanceof String permissionValue)) {
+                continue;
+            }
+
+            int separator = permissionValue.indexOf(':');
+            if (separator <= 0 || separator == permissionValue.length() - 1
+                    || !permissionValue.substring(0, separator)
+                            .equalsIgnoreCase(requestMethod)) {
+                continue;
+            }
+
+            try {
+                PathPattern pattern =
+                        pathPatternParser.parse(permissionValue.substring(separator + 1));
+                if (pattern.matches(requestPath)) {
+                    return true;
+                }
+            } catch (PatternParseException exception) {
+                continue;
             }
         }
 
-        return new AuthorizationDecision(false);
-    }
-
-    private boolean matches(
-            String permission,
-            String requestMethod,
-            PathContainer requestPath) {
-        int separator = permission.indexOf(':');
-        if (separator <= 0 || separator == permission.length() - 1
-                || !permission.substring(0, separator).equalsIgnoreCase(requestMethod)) {
-            return false;
-        }
-
-        String permissionPath = permission.substring(separator + 1);
-        try {
-            PathPattern pattern = pathPatternParser.parse(permissionPath);
-            return pattern.matches(requestPath);
-        } catch (PatternParseException exception) {
-            return false;
-        }
+        return false;
     }
 }
