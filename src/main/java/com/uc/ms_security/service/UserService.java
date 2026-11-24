@@ -5,6 +5,7 @@ import com.uc.ms_security.dto.user.UpdateUserDTO;
 import com.uc.ms_security.dto.user.UserDetailResponseDTO;
 import com.uc.ms_security.dto.user.UserResponseDTO;
 import com.uc.ms_security.dto.user.UserRolesResponseDTO;
+import com.uc.ms_security.dto.user.UserSelectorResponseDTO;
 import com.uc.ms_security.dto.user.UserSessionsResponseDTO;
 import com.uc.ms_security.entity.Role;
 import com.uc.ms_security.entity.User;
@@ -80,6 +81,17 @@ public class UserService {
     public List<UserDetailResponseDTO> findAll() {
         List<User> users = userRepository.findAll();
         return userMapper.toDetailResponseDTOList(users);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserSelectorResponseDTO> findAllForSelector() {
+        return userRepository.findAllByActiveTrue().stream()
+                .map(user -> new UserSelectorResponseDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getActive()))
+                .toList();
     }
 
     private User findUser(Long id) {

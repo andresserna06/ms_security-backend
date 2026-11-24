@@ -51,6 +51,7 @@ public class PermissionDataSeeder implements CommandLineRunner {
         String defaultRoleName = resolveDefaultUserRoleName();
         List<Permission> securityPermissions = seedPermissions(securityPermissionSeeds());
         List<Permission> sportPermissions = seedPermissions(sportPermissionSeeds());
+        List<Permission> sportsAdminExtraPermissions = seedPermissions(sportsAdminExtraPermissionSeeds());
         List<Permission> defaultUserPermissions = seedPermissions(defaultUserPermissionSeeds());
 
         Role adminRole = ensureRole(
@@ -65,6 +66,7 @@ public class PermissionDataSeeder implements CommandLineRunner {
 
         assignPermissions(adminRole, securityPermissions);
         assignPermissions(sportsAdminRole, sportPermissions);
+        assignPermissions(sportsAdminRole, sportsAdminExtraPermissions);
         assignPermissions(defaultUserRole, defaultUserPermissions);
         seedAdminUser(adminRole);
         backfillDefaultRole(defaultUserRole);
@@ -148,6 +150,12 @@ public class PermissionDataSeeder implements CommandLineRunner {
                 new PermissionSeed("GET", "/players/{id}"),
                 new PermissionSeed("GET", "/tournaments"),
                 new PermissionSeed("GET", "/tournaments/{id}")
+        );
+    }
+
+    private List<PermissionSeed> sportsAdminExtraPermissionSeeds() {
+        return List.of(
+                new PermissionSeed("GET", "/api/users/selector")
         );
     }
 

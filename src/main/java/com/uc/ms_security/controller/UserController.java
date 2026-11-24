@@ -5,6 +5,7 @@ import com.uc.ms_security.dto.user.UpdateUserDTO;
 import com.uc.ms_security.dto.user.UserDetailResponseDTO;
 import com.uc.ms_security.dto.user.UserResponseDTO;
 import com.uc.ms_security.dto.user.UserRolesResponseDTO;
+import com.uc.ms_security.dto.user.UserSelectorResponseDTO;
 import com.uc.ms_security.dto.user.UserSessionsResponseDTO;
 import com.uc.ms_security.service.UserService;
 import jakarta.validation.Valid;
@@ -29,6 +30,11 @@ public class UserController {
     @GetMapping
     public List<UserDetailResponseDTO> findAll() {
         return userService.findAll();
+    }
+
+    @GetMapping("/selector")
+    public List<UserSelectorResponseDTO> findAllForSelector() {
+        return userService.findAllForSelector();
     }
 
     @GetMapping("/{id}")
