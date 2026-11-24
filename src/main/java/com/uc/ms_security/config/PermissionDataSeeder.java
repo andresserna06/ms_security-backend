@@ -155,7 +155,8 @@ public class PermissionDataSeeder implements CommandLineRunner {
 
     private List<PermissionSeed> sportsAdminExtraPermissionSeeds() {
         return List.of(
-                new PermissionSeed("GET", "/api/users/selector")
+                new PermissionSeed("GET", "/api/users/selector"),
+                new PermissionSeed("GET", "/api/users/{id}")
         );
     }
 
