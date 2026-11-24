@@ -134,7 +134,8 @@ public class AuthService {
         // Generar el token JWT con roles y permisos
         AuthResponseDTO authResponse = jwtService.generateToken(user);
 
-        // Almacenar el token emitido en la sesión y actualizar su expiración a la del JWT (15 min)
+        // Almacenar el token emitido en la sesión y actualizar su expiración a la del JWT
+        // (security.jwt.expiration-minutes)
         session.setToken(authResponse.accessToken());
         session.setExpiration(LocalDateTime.ofInstant(
                 authResponse.expiresAt(), ZoneId.systemDefault()));

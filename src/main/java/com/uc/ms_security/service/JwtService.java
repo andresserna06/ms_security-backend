@@ -3,6 +3,7 @@ package com.uc.ms_security.service;
 import com.uc.ms_security.dto.auth.AuthResponseDTO;
 import com.uc.ms_security.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -20,14 +21,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JwtService { // JwtService define la información y duración del token, y solicita a JwtEncoder que lo firme.
 
-    private static final Duration TOKEN_DURATION =
-            Duration.ofMinutes(15);
-
     private final JwtEncoder jwtEncoder; // inyeccion de dependencias
+
+    // Duración del token en minutos; se configura con security.jwt.expiration-minutes
+    // (variable JWT_EXPIRATION_MINUTES). La sesión guardada en BD vence al mismo tiempo.
+    @Value("${security.jwt.expiration-minutes:120}")
+    private long expirationMinutes;
 
     public AuthResponseDTO generateToken(User user) {
         Instant now = Instant.now();
-        Instant expiresAt = now.plus(TOKEN_DURATION);
+        Instant expiresAt = now.plus(Duration.ofMinutes(expirationMinutes));
 
         List<String> roles = user.getUserRoles() != null
                 ? user.getUserRoles().stream()
