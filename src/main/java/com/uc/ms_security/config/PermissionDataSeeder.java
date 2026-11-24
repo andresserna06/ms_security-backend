@@ -153,10 +153,13 @@ public class PermissionDataSeeder implements CommandLineRunner {
         );
     }
 
+    // Read-only access to users that the sports views and ms_sports need:
+    // player name and photo, and fan e-mails for match notifications.
     private List<PermissionSeed> sportsAdminExtraPermissionSeeds() {
         return List.of(
                 new PermissionSeed("GET", "/api/users/selector"),
-                new PermissionSeed("GET", "/api/users/{id}")
+                new PermissionSeed("GET", "/api/users/{id}"),
+                new PermissionSeed("GET", "/api/users/{id}/detail")
         );
     }
 
