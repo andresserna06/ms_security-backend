@@ -3,6 +3,7 @@ package com.uc.ms_security.config;
 import com.uc.ms_security.authorization.DynamicAuthorizationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,6 +44,10 @@ public class SecurityConfig {
                     "/api/auth/reset-password",
                     "/api/auth/logout"
                 ).permitAll()
+                .requestMatchers(
+                    HttpMethod.POST,
+                    "/api/internal/security/permissions-validation"
+                ).authenticated()
                 .anyRequest().access(dynamicAuthorizationManager)
             )
             .oauth2ResourceServer(resourceServer -> resourceServer

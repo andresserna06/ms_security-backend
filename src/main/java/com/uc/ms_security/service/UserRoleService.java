@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -26,10 +27,13 @@ public class UserRoleService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final UserRoleMapper userRoleMapper;
+    private final RolePermissionAuthorizationService authorizationService;
 
     @Transactional
     public UserRoleResponseDTO assign(
-            AssignRoleRequestDTO dto) {
+            AssignRoleRequestDTO dto,
+            Collection<String> roles) {
+        authorizationService.ensureCanManage(roles);
 
         User user = userRepository.findById(dto.getUserId()) // Verifica exista usuario
                 .orElseThrow(
@@ -87,7 +91,9 @@ public class UserRoleService {
     }
 
     @Transactional
-    public void delete(Long userId, Long roleId) {
+    public void delete(Long userId, Long roleId, Collection<String> roles) {
+        authorizationService.ensureCanManage(roles);
+
         UserRole userRole = findAssignment(userId, roleId);
 
         userRoleRepository.delete(userRole);

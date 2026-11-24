@@ -3,15 +3,20 @@ package com.uc.ms_security.service;
 import com.uc.ms_security.dto.auth.AuthResponseDTO;
 import com.uc.ms_security.entity.AuthProvider;
 import com.uc.ms_security.entity.Profile;
+import com.uc.ms_security.entity.Role;
 import com.uc.ms_security.entity.Session;
 import com.uc.ms_security.entity.User;
+import com.uc.ms_security.entity.UserRole;
 import com.uc.ms_security.exception.ApplicationException;
 import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.repository.ProfileRepository;
+import com.uc.ms_security.repository.RoleRepository;
 import com.uc.ms_security.repository.SessionRepository;
 import com.uc.ms_security.repository.UserRepository;
+import com.uc.ms_security.repository.UserRoleRepository;
 import com.uc.ms_security.service.oauth.OAuthProviderStrategy;
 import com.uc.ms_security.service.oauth.OAuthUserProfile;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -34,13 +40,19 @@ public class OAuthService {
     private final SessionRepository sessionRepository;
     private final ProfileRepository profileRepository;
     private final JwtService jwtService;
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final String defaultUserRoleName;
 
     public OAuthService(
             List<OAuthProviderStrategy> providerStrategies,
             UserRepository userRepository,
             SessionRepository sessionRepository,
             ProfileRepository profileRepository,
-            JwtService jwtService) {
+            JwtService jwtService,
+            RoleRepository roleRepository,
+            UserRoleRepository userRoleRepository,
+            @Value("${security.oauth.default-role:USER}") String defaultUserRoleName) {
 
         this.strategies = new EnumMap<>(AuthProvider.class);
         providerStrategies.forEach(strategy -> this.strategies.put(strategy.getProviderName(), strategy));
@@ -49,6 +61,9 @@ public class OAuthService {
         this.sessionRepository = sessionRepository;
         this.profileRepository = profileRepository;
         this.jwtService = jwtService;
+        this.roleRepository = roleRepository;
+        this.userRoleRepository = userRoleRepository;
+        this.defaultUserRoleName = defaultUserRoleName;
     }
 
     @Transactional
@@ -141,6 +156,7 @@ public class OAuthService {
         user.setAuthProvider(provider);
 
         User savedUser = userRepository.save(user);
+        assignDefaultRole(savedUser);
 
         // Asignación inicial de foto al registrarse por primera vez si el proveedor la incluye
         if (profile.photoUrl() != null && !profile.photoUrl().isBlank()) {
@@ -152,6 +168,31 @@ public class OAuthService {
         }
 
         return savedUser;
+    }
+
+    private void assignDefaultRole(User user) {
+        String roleName = resolveDefaultUserRoleName();
+        Role role = roleRepository.findByNameIgnoreCase(roleName)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorCase.INVALID_OPERATION,
+                        "No existe el rol por defecto configurado: " + roleName
+                ));
+
+        if (userRoleRepository.existsByUserIdAndRoleId(user.getId(), role.getId())) {
+            return;
+        }
+
+        UserRole userRole = new UserRole();
+        userRole.setUser(user);
+        userRole.setRole(role);
+        userRoleRepository.save(userRole);
+    }
+
+    private String resolveDefaultUserRoleName() {
+        if (defaultUserRoleName == null || defaultUserRoleName.isBlank()) {
+            return "USER";
+        }
+        return defaultUserRoleName.trim().toUpperCase(Locale.ROOT);
     }
 
     private String resolveName(OAuthUserProfile profile) {

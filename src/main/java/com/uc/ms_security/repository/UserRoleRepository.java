@@ -11,6 +11,8 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
 
         boolean existsByUserIdAndRoleId(Long userId, Long roleId);
 
+        boolean existsByUserId(Long userId);
+
         @EntityGraph(attributePaths = {"user", "role"})
         List<UserRole> findAllByUserId(Long userId); // Metodo para encontrar todos los roles de un usuario
 

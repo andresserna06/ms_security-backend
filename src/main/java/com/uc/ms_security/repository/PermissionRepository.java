@@ -13,6 +13,8 @@ public interface PermissionRepository
 
     boolean existsByUrlAndMethod(String url, String method);
 
+    java.util.Optional<Permission> findByUrlAndMethod(String url, String method);
+
     boolean existsByUrlAndMethodAndIdNot(
             String url,
             String method,

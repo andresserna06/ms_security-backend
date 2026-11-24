@@ -62,6 +62,13 @@ public class RoleService {
 
                 Role role = findEntityById(id);
 
+                if (isAdminRole(role.getName())
+                                && !isAdminRole(dto.getName())) {
+                        throw new ApplicationException(
+                                        ErrorCase.INVALID_OPERATION,
+                                        "No se puede modificar el nombre del rol ADMIN");
+                }
+
                 if (roleRepository.existsByNameIgnoreCaseAndIdNot(
                                 dto.getName(), id)) {
                         throw new ApplicationException(
@@ -78,6 +85,12 @@ public class RoleService {
         public void delete(Long id) {
                 Role role = findEntityById(id);
 
+                if (isAdminRole(role.getName())) {
+                        throw new ApplicationException(
+                                        ErrorCase.INVALID_OPERATION,
+                                        "No se puede eliminar el rol ADMIN");
+                }
+
                 if (userRoleRepository.existsByRoleId(id)) {
                         throw new ApplicationException(
                                         ErrorCase.INVALID_OPERATION,
@@ -85,6 +98,10 @@ public class RoleService {
                 }
 
                 roleRepository.delete(role);
+        }
+
+        private boolean isAdminRole(String roleName) {
+                return "ADMIN".equalsIgnoreCase(roleName);
         }
 
         private Role findEntityById(Long id) {
